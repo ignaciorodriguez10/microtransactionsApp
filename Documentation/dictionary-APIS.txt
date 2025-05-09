@@ -1,0 +1,51 @@
+API Dictionary
+
+1. Authentication Routes
+------------------------
+GET    /login         : Show login form
+POST   /login         : Authenticate user (body: email, password)
+GET    /register      : Show registration form
+POST   /register      : Register new user (body: name, email, password)
+GET    /logout        : Log out current user
+
+2. Card Management Routes (Requires auth)
+-----------------------------------------
+GET    /cards                 : List all user’s saved cards
+POST   /cards/add             : Add a new card (body: number, exp_month, exp_year, cvc)
+POST   /cards/delete/:cardId  : Delete a saved card (URL param: cardId)
+POST   /cards/recharge        : Recharge balance using saved card (body: cardId, cvc, amount)
+  - Validates ID format
+  - Verifies card ownership
+  - Calls external Credit Card Backend for validation
+  - Updates user balance and logs transaction
+
+3. Request Money Routes (Requires auth)
+----------------------------------------
+GET    /request-money          : Show form to request money
+POST   /request-money          : Submit a new request (body: recipientEmail, amount, note)
+GET    /requests               : Show incoming and outgoing requests
+POST   /requests/accept/:id    : Accept a pending request (URL param: id)
+POST   /requests/cancel/:id    : Cancel a pending request (URL param: id) (sender)
+POST   /requests/reject/:id    : Reject a pending request (URL param: id) (recipient)
+
+4. Transaction History Routes (Requires auth)
+--------------------------------------------
+GET    /profile/transactions   : List user’s sent transactions
+
+5. Transfer Money Routes (Requires auth)
+----------------------------------------
+GET    /transfer-money         : Show transfer money form
+POST   /transfer-money         : Submit a transfer (body: recipientEmail, amount, note)
+  - Validates sender & recipient existence
+  - Checks balance and positive amount
+  - Prevents self-transfer
+  - Updates balances and logs transaction
+
+6. User Profile Routes (Requires auth)
+--------------------------------------
+GET    /profile               : View user profile
+GET    /profile/edit          : Show edit profile form
+POST   /profile/edit          : Save profile changes (body: name, email)
+POST   /profile/delete        : Delete user account (body: password)
+  - Validates password
+  - Deletes user, clears cookie, shows success

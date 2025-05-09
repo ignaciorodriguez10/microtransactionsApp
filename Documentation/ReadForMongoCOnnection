@@ -1,0 +1,6 @@
+La mongo DB esta publica por lo que no hará falta pero en el caso real deberiamos tener archivos de configuracion como este
+
+USERNAME = ignaciorodriguezurzaiz
+PASS = 71ktTMHr1Nr0kSR8
+
+conectionString = mongodb+srv://ignaciorodriguezurzaiz:71ktTMHr1Nr0kSR8@clustertranscationsapp.32kjqo6.mongodb.net/?retryWrites=true&w=majority&appName=ClusterTranscationsApp

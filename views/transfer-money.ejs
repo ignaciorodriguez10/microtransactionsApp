@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Transferir dinero</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    body {
+      background: url('/imagenes/fondoTransfer.jpg') no-repeat center center fixed;
+      background-size: cover;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .transfer-card {
+      background-color: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(6px);
+      border-radius: 1rem;
+      padding: 2rem;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .page-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #2c3e50;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .btn-group-custom {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    @media (min-width: 576px) {
+      .btn-group-custom {
+        flex-direction: row;
+        justify-content: space-between;
+      }
+    }
+
+    label {
+      font-weight: 500;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="transfer-card">
+    <h1 class="page-title">Transferir dinero</h1>
+    <form id="transferForm" action="/transfer-money" method="POST">
+      <div class="mb-4">
+        <label for="recipientEmail" class="form-label">Correo del destinatario:</label>
+        <input type="email" class="form-control" id="recipientEmail" name="recipientEmail" required />
+      </div>
+      <div class="mb-4">
+        <label for="amount" class="form-label">Cantidad (€):</label>
+        <input type="number" step="0.01" class="form-control" id="amount" name="amount" required />
+      </div>
+      <div class="mb-4">
+        <label for="note" class="form-label">Nota (opcional):</label>
+        <textarea class="form-control" id="note" name="note" rows="3"></textarea>
+      </div>
+      <div class="btn-group-custom">
+        <button type="button" class="btn btn-secondary" onclick="window.location.href='/dashboard'">
+          Inicio
+        </button>
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#confirmModal">
+          Realizar transferencia
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Modal de confirmación -->
+  <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmModalLabel">Confirmar transferencia</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          ¿Estás seguro de que deseas enviar <strong id="confirmAmount"></strong> € a
+          <strong id="confirmRecipient"></strong>?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-success" id="confirmBtn">Sí, transferir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const confirmBtn = document.getElementById('confirmBtn');
+    const transferForm = document.getElementById('transferForm');
+    const recipientInput = document.getElementById('recipientEmail');
+    const amountInput = document.getElementById('amount');
+    const confirmRecipient = document.getElementById('confirmRecipient');
+    const confirmAmount = document.getElementById('confirmAmount');
+    const confirmModalEl = document.getElementById('confirmModal');
+
+    confirmModalEl.addEventListener('show.bs.modal', () => {
+      confirmRecipient.textContent = recipientInput.value;
+      confirmAmount.textContent = amountInput.value;
+    });
+
+    confirmBtn.addEventListener('click', () => {
+      transferForm.submit();
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const error = params.get('error');
+      const success = params.get('success');
+
+      if (error) {
+        const messages = {
+          invalid: 'Faltan datos o usuario no encontrado.',
+          self: 'No puedes transferirte a ti mismo.',
+          invalid_amount: 'La cantidad debe ser mayor que cero.',
+          insufficient: 'Saldo insuficiente.',
+          server: 'Error del servidor. Intenta más tarde.'
+        };
+        Swal.fire({
+          icon: 'error',
+          title: '¡Error!',
+          text: messages[error] || 'Ha ocurrido un error.',
+        });
+      }
+
+      if (success === 'transfer') {
+        Swal.fire({
+          icon: 'success',
+          title: '¡Éxito!',
+          text: 'Transferencia realizada correctamente.',
+          timer: 2000,
+          showConfirmButton: true
+        });
+        window.location.href = '/dashboard';
+      }
+    });
+  </script>
+</body>
+
+</html>

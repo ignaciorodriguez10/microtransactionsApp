@@ -1,0 +1,38 @@
+{
+  "name": "practicafinal",
+  "version": "1.0.0",
+  "description": "microtransactions-app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ignaciorodriguez10/microtransactionsApp.git"
+  },
+  "keywords": [
+    "node",
+    "express",
+    "microtransactions",
+    "web",
+    "app"
+  ],
+  "author": "Ignacio Rodriguez Senis",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ignaciorodriguez10/microtransactionsApp/issues"
+  },
+  "homepage": "https://github.com/ignaciorodriguez10/microtransactionsApp#readme",
+  "dependencies": {
+    "axios": "^1.9.0",
+    "bcrypt": "^5.1.1",
+    "bcryptjs": "^3.0.2",
+    "connect-mongo": "^5.1.0",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^16.5.0",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.13.3"
+  }
+}

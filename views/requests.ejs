@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Solicitudes de dinero</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    body {
+      background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+        url('/imagenes/fondoSolicitudes.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    .glass-card {
+      background-color: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(5px);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    h1,
+    h3 {
+      color: white;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    }
+
+    .list-group-item {
+      background-color: rgba(255, 255, 255, 0.95);
+      border: none;
+      border-radius: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .btn-sm {
+      margin: 0.25rem 0.25rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="glass-card">
+      <h1 class="mb-4 text-center">Solicitudes de dinero</h1>
+
+      <h3 class="mb-3">Solicitudes Recibidas</h3>
+      <ul class="list-group mb-4">
+        <% const pendingIncoming=incomingRequests.filter(r=> r.status === 'pending'); %>
+        <% if (pendingIncoming.length===0) { %>
+        <li class="list-group-item text-center text-muted">No tienes solicitudes pendientes.</li>
+        <% } else { %>
+        <% incomingRequests.slice().reverse().forEach(function(request) { %>
+        <li class="list-group-item">
+          <div class="d-flex flex-column flex-md-row justify-content-between align-items-start gap-2">
+            <div>
+              <strong>De:</strong> <%= request.sender.name %> (<%= request.sender.email %>)<br />
+              <strong>Cantidad:</strong> <%= request.amount %>€<br />
+              <strong>Nota:</strong> <%= request.note %>
+            </div>
+            <div class="text-end">
+              <form action="/requests/accept/<%= request._id %>" method="POST" class="d-inline swal-aceptar-form">
+                <button type="submit" class="btn btn-success btn-sm">Aceptar</button>
+              </form>
+              <form action="/requests/reject/<%= request._id %>" method="POST" class="d-inline swal-rechazar-form">
+                <button type="submit" class="btn btn-danger btn-sm">Rechazar</button>
+              </form>
+            </div>
+          </div>
+        </li>
+        <% }); %>
+        <% } %>
+      </ul>
+
+      <h3 class="mb-3">Solicitudes Enviadas</h3>
+      <ul class="list-group mb-4">
+        <% if (outgoingRequests.length===0) { %>
+        <li class="list-group-item text-center text-muted">No has enviado solicitudes.</li>
+        <% } else { %>
+        <% outgoingRequests.slice().reverse().forEach(function(request) { %>
+        <li class="list-group-item">
+          <div class="d-flex flex-column flex-md-row justify-content-between align-items-start gap-2">
+            <div>
+              <strong>Para:</strong> <%= request.recipient.name %> (<%= request.recipient.email %>)<br />
+              <strong>Cantidad:</strong> <%= request.amount %>€<br />
+              <strong>Nota:</strong> <%= request.note || 'Sin nota' %><br />
+              <strong>Estado:</strong> <%= request.status || 'Pendiente' %>
+            </div>
+            <div class="text-end">
+              <form action="/requests/cancel/<%= request._id %>" method="POST" class="d-inline swal-cancelar-form">
+                <button type="submit" class="btn btn-warning btn-sm">Cancelar</button>
+              </form>
+            </div>
+          </div>
+        </li>
+        <% }); %>
+        <% } %>
+      </ul>
+
+      <div class="text-center">
+        <a href="/dashboard" class="btn btn-secondary">Volver al inicio</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SweetAlert confirmaciones -->
+  <script>
+    function confirmarConSwal(form, options) {
+      Swal.fire({
+        title: options.title,
+        text: options.text,
+        icon: options.icon,
+        showCancelButton: true,
+        confirmButtonColor: options.confirmColor || '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: options.confirmText || 'Sí',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          form.submit();
+        }
+      });
+    }
+
+    document.querySelectorAll('.swal-aceptar-form').forEach(form => {
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        confirmarConSwal(form, {
+          title: '¿Aceptar solicitud?',
+          text: 'El dinero será transferido si hay saldo suficiente.',
+          icon: 'question',
+          confirmColor: '#28a745',
+          confirmText: 'Aceptar'
+        });
+      });
+    });
+
+    document.querySelectorAll('.swal-rechazar-form').forEach(form => {
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        confirmarConSwal(form, {
+          title: '¿Rechazar solicitud?',
+          text: 'Esta acción no se puede deshacer.',
+          icon: 'warning',
+          confirmColor: '#d33',
+          confirmText: 'Estoy seguro'
+        });
+      });
+    });
+
+    document.querySelectorAll('.swal-cancelar-form').forEach(form => {
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        confirmarConSwal(form, {
+          title: '¿Cancelar solicitud?',
+          text: '¿Seguro que quieres cancelar esta solicitud de dinero?',
+          icon: 'warning',
+          confirmColor: '#d33',
+          confirmText: 'Cancelar solicitud'
+        });
+      });
+    });
+
+    const params = new URLSearchParams(window.location.search);
+    const success = params.get('success');
+
+    const successMessages = {
+      aceptado: { title: '¡Solicitud aceptada!', text: 'El dinero ha sido transferido correctamente.' },
+      rechazado: { title: '¡Solicitud rechazada!', text: 'Has rechazado la solicitud correctamente.' },
+      cancelado: { title: '¡Solicitud cancelada!', text: 'La solicitud ha sido cancelada con éxito.' }
+    };
+
+    if (success && successMessages[success]) {
+      Swal.fire({
+        icon: 'success',
+        title: successMessages[success].title,
+        text: successMessages[success].text,
+        timer: 2500,
+        showConfirmButton: true
+      });
+    }
+  </script>
+</body>
+
+</html>
