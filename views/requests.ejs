@@ -65,12 +65,19 @@
               <strong>Nota:</strong> <%= request.note %>
             </div>
             <div class="text-end">
-              <form action="/requests/accept/<%= request._id %>" method="POST" class="d-inline swal-aceptar-form">
-                <button type="submit" class="btn btn-success btn-sm">Aceptar</button>
-              </form>
-              <form action="/requests/reject/<%= request._id %>" method="POST" class="d-inline swal-rechazar-form">
-                <button type="submit" class="btn btn-danger btn-sm">Rechazar</button>
-              </form>
+              <% if (request.status === 'accepted') { %>
+                <span class="badge bg-success">Pagada</span>
+              <% } else if (request.status === 'rejected') { %>
+                <span class="badge bg-danger">Denegada</span>
+              <% } else { %>
+                <form action="/requests/accept/<%= request._id %>" method="POST" class="d-inline swal-aceptar-form">
+                  <button type="submit" class="btn btn-success btn-sm">Aceptar</button>
+                </form>
+                <form action="/requests/reject/<%= request._id %>" method="POST" class="d-inline swal-rechazar-form">
+                  <button type="submit" class="btn btn-danger btn-sm">Rechazar</button>
+                </form>
+              <% } %>
+
             </div>
           </div>
         </li>
@@ -93,10 +100,21 @@
               <strong>Estado:</strong> <%= request.status || 'Pendiente' %>
             </div>
             <div class="text-end">
-              <form action="/requests/cancel/<%= request._id %>" method="POST" class="d-inline swal-cancelar-form">
-                <button type="submit" class="btn btn-warning btn-sm">Cancelar</button>
-              </form>
+              <% if (request.status === 'pending') { %>
+                <form action="/requests/cancel/<%= request._id %>" method="POST" class="d-inline swal-cancelar-form">
+                  <button type="submit" class="btn btn-warning btn-sm">Cancelar</button>
+                </form>
+              <% } else if (request.status === 'accepted') { %>
+                <form action="/requests/delete/<%= request._id %>" method="POST">
+                  <button type="submit" class="btn btn-success btn-sm">Pagado - Eliminar</button>
+                </form>
+              <% } else { %>
+                <form action="/requests/delete/<%= request._id %>" method="POST">
+                  <button type="submit" class="btn btn-danger btn-sm">Rejected - Eliminar</button>
+                </form>
+              <% } %>
             </div>
+
           </div>
         </li>
         <% }); %>
@@ -148,7 +166,7 @@
           title: '¿Rechazar solicitud?',
           text: 'Esta acción no se puede deshacer.',
           icon: 'warning',
-          confirmColor: '#d33',
+          confirmColor: '#6c757d',
           confirmText: 'Estoy seguro'
         });
       });
@@ -173,7 +191,8 @@
     const successMessages = {
       aceptado: { title: '¡Solicitud aceptada!', text: 'El dinero ha sido transferido correctamente.' },
       rechazado: { title: '¡Solicitud rechazada!', text: 'Has rechazado la solicitud correctamente.' },
-      cancelado: { title: '¡Solicitud cancelada!', text: 'La solicitud ha sido cancelada con éxito.' }
+      cancelado: { title: '¡Solicitud cancelada!', text: 'La solicitud ha sido cancelada con éxito.' },
+      eliminado: { title: '¡Solicitud eliminada!', text: 'La solicitud aceptada ha sido eliminada correctamente.'}
     };
 
     if (success && successMessages[success]) {

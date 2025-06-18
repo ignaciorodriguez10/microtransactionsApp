@@ -67,7 +67,12 @@ app.use('/', cardsRoutes);
 app.get('/dashboard', auth, async (req, res) => {
     try {
         const user = await User.findById(req.user.userId);
-        const transactions = await Transaction.find({ sender: req.user.userId }).populate('recipient');
+        const transactions = await Transaction.find({
+  $or: [{ sender: req.user.userId }, { recipient: req.user.userId }]
+})
+.populate('sender', 'name email')
+.populate('recipient', 'name email');
+
         if (!user) return res.status(404).render('errors/404');
         res.render('dashboard', { user, transactions });
     } catch (err) {

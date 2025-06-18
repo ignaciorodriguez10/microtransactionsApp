@@ -1,6 +1,6 @@
 // controllers/authController.js
 const User = require('../models/User');
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 module.exports = {
@@ -19,9 +19,19 @@ module.exports = {
             }
 
             // 2) Hashea la contraseña y guarda el usuario
-            const salt = bcrypt.genSaltSync(10);
-            const hashed = bcrypt.hashSync(password, salt);
-            const user = await User.create({ name, email, password: hashed });
+            //const salt = bcrypt.genSaltSync(10);
+            //const hashed = bcrypt.hashSync(password, salt);
+
+            console.log('>>>>>>>', { name, email, password });
+
+            const user = await User.create({ name, email, password });
+
+
+            
+            const match = await bcrypt.compare(password, user.password);
+            console.log('>>>>>>>>match',{match, password, USERPASSWD: user.password} );
+
+
 
             // 3) Genera el token
             const token = jwt.sign(
@@ -58,7 +68,8 @@ module.exports = {
             if (!user) {
                 return res.status(401).send('El usuario no existe.');
             }
-            if (!bcrypt.compare(password, user.password)) {
+            console.log('Comparando contraseñas:', password, user.password);    
+            if (!(await bcrypt.compare(password, user.password))) {
                 return res.status(401).send('Contraseña incorrecta.');
             }
 

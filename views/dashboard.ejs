@@ -94,6 +94,8 @@
         .transaction-card strong {
             color: #333;
         }
+
+        
     </style>
 </head>
 
@@ -107,7 +109,6 @@
             </div>
         </div>
     </nav>
-
     <div class="container text-center my-5">
         <div class="balance-box">
             <div class="balance-amount">
@@ -142,32 +143,47 @@
 
             <!-- Historial de transacciones -->
             <h4 class="mb-3 text-start">Historial reciente</h4>
-            <div class="transaction-scrollable mb-3">
-                <% if (transactions && transactions.length> 0) { %>
-                    <% transactions.slice().reverse().forEach(function(transaction) { %>
-                        <div class="transaction-card">
-                            <div><strong>Destinatario:</strong>
-                                <%= transaction.recipient.name %>
-                            </div>
-                            <div>
-                                <strong>Cantidad:</strong>
-                                <%= Intl.NumberFormat('es-ES', { style: 'currency' , currency: 'EUR'
-                                    }).format(transaction.amount) %>
-                            </div>
-                            <div><strong>Nota:</strong>
-                                <%= transaction.note || 'Sin nota' %>
-                            </div>
-                            <div>
-                                <strong>Fecha:</strong>
-                                <%= transaction.date.toLocaleDateString() %> a las <%=
-                                        transaction.date.toLocaleTimeString() %>
-                            </div>
-                        </div>
-                        <% }); %>
-                            <% } else { %>
-                                <p class="text-muted">No hay transacciones recientes.</p>
-                                <% } %>
-            </div>
+<div class="transaction-scrollable mb-3">
+  <% if (transactions && transactions.length > 0) { %>
+    <% transactions.slice().reverse().forEach(function(transaction) { %>
+      <div class="transaction-card d-flex align-items-center gap-3">
+        <% if (!transaction.sender) { %>
+          <!-- Recarga de dinero -->
+<i class="bi bi-wallet-fill" style="font-size: 1.8rem; color: dodgerblue;" title="Recarga de dinero"></i>
+          <div>
+            <div><strong>Acción:</strong> Recarga de dinero</div>
+            <div><strong>Cantidad:</strong> <%= Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(transaction.amount) %></div>
+            <div><strong>Nota:</strong> <%= transaction.note || 'Sin nota' %></div>
+            <div><strong>Fecha:</strong> <%= new Date(transaction.createdAt).toLocaleDateString() %> a las <%= new Date(transaction.createdAt).toLocaleTimeString() %></div>
+          </div>
+
+        <% } else if (transaction.recipient && transaction.recipient._id.toString() === user._id.toString()) { %>
+          <!-- Transacción entrante -->
+          <i class="bi bi-arrow-left-circle-fill" style="font-size: 1.8rem; color: green;" title="Recibido"></i>
+          <div>
+            <div><strong>Pagado por:</strong> <%= transaction.sender?.name || 'Desconocido' %></div>
+            <div><strong>Cantidad:</strong> <%= Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(transaction.amount) %></div>
+            <div><strong>Nota:</strong> <%= transaction.note || 'Sin nota' %></div>
+            <div><strong>Fecha:</strong> <%= new Date(transaction.createdAt).toLocaleDateString() %> a las <%= new Date(transaction.createdAt).toLocaleTimeString() %></div>
+          </div>
+
+        <% } else if (transaction.sender && transaction.sender._id.toString() === user._id.toString()) { %>
+          <!-- Transacción saliente -->
+          <i class="bi bi-arrow-right-circle-fill" style="font-size: 1.8rem; color: red;" title="Enviado"></i>
+          <div>
+            <div><strong>Para:</strong> <%= transaction.recipient?.name || 'Desconocido' %></div>
+            <div><strong>Cantidad:</strong> <%= Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(transaction.amount) %></div>
+            <div><strong>Nota:</strong> <%= transaction.note || 'Sin nota' %></div>
+            <div><strong>Fecha:</strong> <%= new Date(transaction.createdAt).toLocaleDateString() %> a las <%= new Date(transaction.createdAt).toLocaleTimeString() %></div>
+          </div>
+        <% } %>
+      </div>
+    <% }); %>
+  <% } else { %>
+    <p class="text-muted">No hay transacciones recientes.</p>
+  <% } %>
+</div>
+
 
             <!-- Botón Ver todo -->
             <a href="/profile/transactions" class="btn btn-outline-primary">Ver todo</a>

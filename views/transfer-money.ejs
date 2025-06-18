@@ -147,11 +147,13 @@
           icon: 'success',
           title: '¡Éxito!',
           text: 'Transferencia realizada correctamente.',
-          timer: 2000,
-          showConfirmButton: true
+          timer: 1500, // ajusta el tiempo que desees mostrarlo (milisegundos)
+          showConfirmButton: false
+        }).then(() => {
+          window.location.href = '/dashboard';
         });
-        window.location.href = '/dashboard';
       }
+
     });
   </script>
 </body>
