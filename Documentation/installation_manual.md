@@ -38,5 +38,4 @@ NAVEGADOR -> http://localhost:3000/
 ```
 Accede a la aplicación en tu navegador: `http://localhost:3000`
 
-## 5. Nota sobre el Credit Card Backend
-Asegúrate de que el servicio de validación de tarjetas (Credit Card Backend) esté corriendo en `http://localhost:4000/api/validate-card` antes de recargar saldo.
+
