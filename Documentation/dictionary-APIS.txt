@@ -27,6 +27,7 @@ GET    /requests               : Show incoming and outgoing requests
 POST   /requests/accept/:id    : Accept a pending request (URL param: id)
 POST   /requests/cancel/:id    : Cancel a pending request (URL param: id) (sender)
 POST   /requests/reject/:id    : Reject a pending request (URL param: id) (recipient)
+POST   /requests/delete/:id    : Reject a pending request (URL param: id) (recipient)
 
 4. Transaction History Routes (Requires auth)
 --------------------------------------------

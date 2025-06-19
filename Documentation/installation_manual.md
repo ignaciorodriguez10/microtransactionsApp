@@ -15,7 +15,7 @@ npm install
 Crea un archivo `.env` en la raíz del proyecto con las siguientes variables:
 ```
 PORT=3000
-MONGODB_URI=<TU_URI_DE_MONGO_ATLAS_PUBLICO>
+MONGODB_URI=MONGO_URI=mongodb+srv://ignaciorodriguezurzaiz:71ktTMHr1Nr0kSR8@clustertranscationsapp.32kjqo6.mongodb.net/?retryWrites=true&w=majority&appName=ClusterTranscationsApp
 JWT_SECRET=<UNA_CLAVE_SECRETA_PARA_TOKENS>
 CREDIT_CARD_BACKEND=http://localhost:4000/api/validate-card
 ```
