@@ -2,8 +2,18 @@
 
 ## 1. Clonar el repositorio
 ```bash
-git clone https://github.com/tu-usuario/tu-proyecto.git
-cd tu-proyecto
+git clone https://github.com/ignaciorodriguez10/microtransactionsApp
+```
+**Nota:** Es muy recomendable crear un entorno virtual en el que ejecutar npm install.
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+Una vez hecho esto esto nos situamos en el proyecto
+```
+cd microtransactionsApp
 ```
 
 ## 2. Instalar dependencias
@@ -19,13 +29,11 @@ MONGODB_URI=MONGO_URI=mongodb+srv://ignaciorodriguezurzaiz:71ktTMHr1Nr0kSR8@clus
 JWT_SECRET=<UNA_CLAVE_SECRETA_PARA_TOKENS>
 CREDIT_CARD_BACKEND=http://localhost:4000/api/validate-card
 ```
-- **MONGODB_URI**: La base de datos está alojada en MongoDB Atlas y es de acceso público. Para ello se ha configurado una regla de red que permite conexiones desde cualquier dirección IP (`0.0.0.0/0`). Copia la URI proporcionada por Atlas.
+- **MONGODB_URI**: La base de datos está alojada en MongoDB Atlas y es de acceso público. Para ello se ha configurado una regla de red que permite conexiones desde cualquier dirección IP (`0.0.0.0/0`). Copia la URI proporcionada por Atlas y cambiala en ```.env```
 
 ## 4. Iniciar la aplicación
 ```bash
-terminal1 -> nodemon index.js
-terminal2 -> nodemon credit-card-backend/cardServer.js
-
+terminal -> python3 startup.py 
 NAVEGADOR -> http://localhost:3000/
 ```
 Accede a la aplicación en tu navegador: `http://localhost:3000`
